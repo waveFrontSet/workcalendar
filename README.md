@@ -12,9 +12,14 @@ A small django app to experiment with the deployment process of
   [enable
   Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes).
 
-If you have the prerequisites installed, you can do `devspace dev` to fire up a
-development container. Then, issue `python manage.py runserver` to start the
-development server.
-
-If you want to test proper deployment you will need to execute `devspace
-deploy`.
+Then, we can use `devspace` to fire up a development container via the following
+process.
+1. Choose a namespace for the app, for example `workcalendar` via `devspace use
+   namespace workcalendar`.
+2. Fire up the development container `devspace dev` which will load a pre-built
+   development image containing all necessary dependencies and development
+   extras such as `pytest`, `flake8` and `black`.
+3. As soon as you regain control, you will have access to the shell of the
+   development container. Execute `python manage.py runserver 5000` to fire up a
+   development server listening on port 5000. If everything goes will, you will
+   be greeted by a new browser window showing the app.
