@@ -21,5 +21,5 @@ process.
    extras such as `pytest`, `flake8` and `black`.
 3. As soon as you regain control, you will have access to the shell of the
    development container. Execute `python manage.py runserver 5000` to fire up a
-   development server listening on port 5000. If everything goes will, you will
+   development server listening on port 5000. If everything goes well, you will
    be greeted by a new browser window showing the app.
