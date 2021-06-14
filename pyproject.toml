@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "workcalendar"
+version = "0.1.0"
+description = "A calendar app to track your work days, holidays, sick days..."
+authors = ["Paul Grillenberger <pgrillenberger@nexible.de>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Django = "^3.2.4"
+djangorestframework = "^3.12.4"
+uvicorn = {extras = ["standard"], version = "^0.14.0"}
+gunicorn = "^20.1.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+pytest-xdist = "^2.2.1"
+pytest-cov = "^2.12.1"
+flake8 = "^3.9.2"
+black = "^21.6b0"
+mypy = "^0.902"
+django-stubs = "^1.8.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
