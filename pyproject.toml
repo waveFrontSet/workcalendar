@@ -20,6 +20,11 @@ flake8 = "^3.9.2"
 black = "^21.6b0"
 mypy = "^0.902"
 django-stubs = "^1.8.0"
+pytest-django = "^4.4.0"
+django-coverage-plugin = "^2.0.0"
+pytest-factoryboy = "^2.1.0"
+factory-boy = "^3.2.0"
+isort = "^5.8.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
