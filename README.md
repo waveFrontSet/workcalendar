@@ -14,12 +14,13 @@ A small django app to experiment with the deployment process of
 
 Then, we can use `devspace` to fire up a development container via the following
 process.
-1. Choose a namespace for the app, for example `workcalendar` via `devspace use
+1. Make sure you are in the right context. If in doubt, use `devspace use
+   context` and select it again. For instance, if you want to use the Docker
+   Kubernetes context you will need to select `docker-desktop`.
+2. Choose a namespace for the app, for example `workcalendar` via `devspace use
    namespace workcalendar`.
-2. Fire up the development container `devspace dev` which will load a pre-built
+3. Fire up the development container `devspace dev` which will load a pre-built
    development image containing all necessary dependencies and development
    extras such as `pytest`, `flake8` and `black`.
-3. As soon as you regain control, you will have access to the shell of the
-   development container. Execute `python manage.py runserver 5000` to fire up a
-   development server listening on port 5000. If everything goes will, you will
-   be greeted by a new browser window showing the app.
+4. If everything goes will, you will be greeted by a new browser window showing
+   the app.
