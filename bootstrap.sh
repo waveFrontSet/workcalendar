@@ -5,7 +5,6 @@ python manage.py migrate
 case $1 in
     "run_locally")
         uvicorn workcalendar.asgi:application \
-            -k uvicorn.workers.UvicornWorker \
             --host 0.0.0.0 \
             --port 5000 \
             --reload
