@@ -19,8 +19,23 @@ process.
    Kubernetes context you will need to select `docker-desktop`.
 2. Choose a namespace for the app, for example `workcalendar` via `devspace use
    namespace workcalendar`.
-3. Fire up the development container `devspace dev` which will load a pre-built
+3. Fire up the development container `devspace dev` which will build a 
    development image containing all necessary dependencies and development
    extras such as `pytest`, `flake8` and `black`.
 4. If everything goes will, you will be greeted by a new browser window showing
-   the app.
+   the app. Logs from the development container will be streamed.
+
+## Running tests and linters
+
+If you stop the logs streaming or open up another terminal window, you may
+enter
+```
+devspace run test
+```
+
+to let the tests run inside the container. If you wish to run linting checks,
+execute
+```
+devspace run lint
+```
+

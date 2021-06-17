@@ -38,8 +38,12 @@ RUN apt-get update \
     && apt-get install --no-install-recommends -y \
         # deps for installing poetry
         curl \
+        # deps for psycopg2
+        libpq-dev \
         # deps for building python deps
-        build-essential
+        build-essential \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && rm -rf /var/lib/apt/lists/*
 # install poetry - respects $POETRY_VERSION & $POETRY_HOME
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 # copy project requirement files here to ensure they will be cached.
@@ -56,10 +60,13 @@ COPY --from=builder-base $POETRY_HOME $POETRY_HOME
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 # quicker install as runtime deps are already installed
 RUN poetry install
+COPY --from=builder-base /usr/lib /usr/lib
+COPY --from=builder-base /lib /lib
 # will become mountpoint of our code
 WORKDIR /app
 COPY ./workcalendar /app/workcalendar
-COPY bootstrap.sh manage.py /app/
+COPY ./apps /app/apps
+COPY bootstrap.sh manage.py setup.cfg /app/
 RUN chmod +x ./bootstrap.sh
 CMD ["run_locally"]
 
@@ -67,8 +74,11 @@ CMD ["run_locally"]
 FROM python-base as production
 ENV ENVIRONMENT=production
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
+COPY --from=builder-base /usr/lib /usr/lib
+COPY --from=builder-base /lib /lib
 WORKDIR /app
 COPY ./workcalendar /app/workcalendar
+COPY ./apps /app/apps
 COPY bootstrap.sh manage.py /app/
 RUN chmod +x ./bootstrap.sh
 CMD ["run"]

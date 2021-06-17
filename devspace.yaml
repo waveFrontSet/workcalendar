@@ -19,6 +19,16 @@ images:
       
 # `deployments` tells DevSpace how to deploy this project
 deployments:
+- name: database
+  helm:
+    chart:
+      name: bitnami/postgresql
+    values:
+      image:
+        tag: "11.12.0"
+      postgresqlDatabase: "db_workcalendar"
+      postgresqlUsername: "workcalendar"
+      postgresqlPassword: ${DB_PASSWORD}
 - name: workcalendar
   # This deployment uses `helm` but you can also define `kubectl` deployments or kustomizations
   helm:
@@ -29,9 +39,30 @@ deployments:
     values:
       containers:
       - image: ${IMAGE} # Use the value of our `${IMAGE}` variable here (see vars above)
+        env:
+        - name: DB_HOST
+          value: "database-postgresql"
+        - name: DB_NAME
+          value: "db_workcalendar"
+        - name: DB_USER
+          value: "workcalendar"
+        - name: DB_PASSWORD
+          value: ${DB_PASSWORD}
       service:
         ports:
         - port: 5000
+
+hooks:
+# Wait for the database container to be up before deploying the app
+- wait:
+    running: true
+  where:
+    container:
+      labelSelector:
+        app.kubernetes.io/name: postgresql
+  when:
+    before:
+      deployments: workcalendar
 
 # `dev` only applies when you run `devspace dev`
 dev:
@@ -53,14 +84,6 @@ dev:
     excludePaths:
     - .git/
 
-  # `dev.terminal` tells DevSpace to open a terminal as a last step during `devspace dev`
-  terminal:
-    imageSelector: ${IMAGE} # Select the Pod that runs our `${IMAGE}`
-    # With this optional `command` we can tell DevSpace to run a script when opening the terminal
-    # This is often useful to display help info for new users or perform initial tasks (e.g. installing dependencies)
-    command:
-    - /bin/bash
-
   # Since our Helm charts and manifests deployments are often optimized for production,
   # DevSpace let's you swap out Pods dynamically to get a better dev environment
   replacePods:
@@ -68,6 +91,14 @@ dev:
     # Since the `${IMAGE}` used to start our main application pod may be distroless or not have any dev tooling, let's replace it with a dev-optimized image
     # DevSpace provides a sample image here but you can use any image for your specific needs
     replaceImage: ${IMAGE_DEV}
+
+  logs:
+    showLast: 200
+    sync: true
+    disabled: false
+    selectors:
+    - labelSelector:
+        app.kubernetes.io/component: workcalendar
 
 # `profiles` lets you modify the config above for different environments (e.g. dev vs production)
 profiles:
@@ -80,3 +111,9 @@ profiles:
       app:
         image: ${IMAGE} # Use the value of our `${IMAGE}` variable here (see vars above)
         dockerfile: ./Dockerfile
+
+commands:
+- name: lint
+  command: "echo 'black --check . && flake8' | devspace enter -l app.kubernetes.io/component=workcalendar"
+- name: test
+  command: "devspace enter pytest -l app.kubernetes.io/component=workcalendar"
