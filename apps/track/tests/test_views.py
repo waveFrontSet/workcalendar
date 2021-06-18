@@ -28,3 +28,11 @@ def test_create_entry(authed_client, day_type):
         reverse("track:entry-list"), data={"day": "2021-01-01", "day_type": day_type}
     )
     assert response.status_code == 201
+
+
+def test_create_duplicate_date(authed_client, entry):
+    response = authed_client.post(
+        reverse("track:entry-list"),
+        data={"day": entry.day, "day_type": entry.day_type.value},
+    )
+    assert response.status_code == 400

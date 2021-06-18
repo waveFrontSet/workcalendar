@@ -11,7 +11,7 @@ class Entry(models.Model):
         VACATION = "vacation", "Took the day off"
         HOLIDAY = "holiday", "Day off because of a holiday"
 
-    day = models.DateField()
+    day = models.DateField(unique=True)
     day_type = models.CharField(max_length=20, choices=DayType.choices)
 
     def __str__(self):
