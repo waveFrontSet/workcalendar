@@ -22,10 +22,11 @@ deployments:
 - name: database
   helm:
     chart:
-      name: bitnami/postgresql
+      name: postgresql
+      repo: https://charts.bitnami.com/bitnami
+      version: 10.5.0
+    wait: true
     values:
-      image:
-        tag: "11.12.0"
       postgresqlDatabase: "db_workcalendar"
       postgresqlUsername: "workcalendar"
       postgresqlPassword: ${DB_PASSWORD}
@@ -51,18 +52,6 @@ deployments:
       service:
         ports:
         - port: 5000
-
-hooks:
-# Wait for the database container to be up before deploying the app
-- wait:
-    running: true
-  where:
-    container:
-      labelSelector:
-        app.kubernetes.io/name: postgresql
-  when:
-    before:
-      deployments: workcalendar
 
 # `dev` only applies when you run `devspace dev`
 dev:
