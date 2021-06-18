@@ -1,7 +1,5 @@
 import pytest
 
-from apps.track.models import Entry
-
 pytestmark = pytest.mark.django_db
 
 

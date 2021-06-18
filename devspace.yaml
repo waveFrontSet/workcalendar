@@ -84,6 +84,8 @@ dev:
     excludePaths:
     - .git/
     - __pycache__/
+    - .coverage
+    - .pytest_cache/
 
   # Since our Helm charts and manifests deployments are often optimized for production,
   # DevSpace let's you swap out Pods dynamically to get a better dev environment
@@ -118,3 +120,5 @@ commands:
   command: "echo 'black --check . && flake8' | devspace enter -l app.kubernetes.io/component=workcalendar"
 - name: test
   command: "devspace enter pytest -l app.kubernetes.io/component=workcalendar"
+- name: testloop
+  command: "echo 'pytest --looponfail' | devspace enter -l app.kubernetes.io/component=workcalendar"
