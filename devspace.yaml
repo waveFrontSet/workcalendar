@@ -65,7 +65,7 @@ dev:
   # `dev.open` tells DevSpace to open certain URLs as soon as they return HTTP status 200
   # Since we configured port-forwarding, we can use a localhost address here to access our application
   open:
-  - url: http://localhost:5000
+  - url: http://localhost:5000/admin
 
   # `dev.sync` configures a file sync between our Pods in k8s and your local project files
   sync:
