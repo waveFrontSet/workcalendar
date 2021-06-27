@@ -135,9 +135,11 @@ profiles:
         dockerfile: ./backend/Dockerfile
 
 commands:
+- name: backend
+  command: "devspace enter -l app.kubernetes.io/component=backend"
 - name: lint
-  command: "echo 'black --check . && flake8' | devspace enter -l app.kubernetes.io/component=backend"
+  command: "devspace run backend -- black --check . && flake8"
 - name: test
-  command: "devspace enter pytest -l app.kubernetes.io/component=backend"
-- name: testloop
-  command: "echo 'pytest --looponfail' | devspace enter -l app.kubernetes.io/component=backend"
+  command: "devspace run backend -- pytest"
+- name: frontend
+  command: "devspace enter -l app.kubernetes.io/component=frontend"

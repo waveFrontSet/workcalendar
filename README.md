@@ -30,16 +30,40 @@ Note that both the frontend and the backend support hot reloading. If you make
 changes to the backend code in `backend/`, the backend server will restart and
 apply your changes immediately. The same goes for the frontend.
 
+## Opening shells to the development containers
+
+If you want to open shells to the development containers you may do so by
+executing
+
+```
+devspace run backend
+```
+or
+
+```
+devspace run frontend
+```
+
+respectively. It's also possible to fire one-off commands inside the containers.
+If you want `flake8` to inspect the code quality inside the backend container,
+you may do so by executing
+
+```
+devspace run backend -- flake8
+```
+
 ## Running tests and linters
 
+There are shortcuts for frequent commands (tests & linting) for the backend
+container.
 If you stop the logs streaming or open up another terminal window, you may
 enter
 ```
 devspace run test
 ```
 
-to let the tests run inside the backend container. If you wish to run linting checks,
-execute
+to let the tests run inside the backend container. If you wish to run linting
+checks (black + flake8), execute
 ```
 devspace run lint
 ```
