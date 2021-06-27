@@ -2,16 +2,20 @@ version: v1beta10
 
 # `vars` specifies variables which may be used as ${VAR_NAME} in devspace.yaml
 vars:
-- name: IMAGE
+- name: BACKEND_IMAGE
   value: ghcr.io/wavefrontset/workcalendar
-- name: IMAGE_DEV
-  value: ${IMAGE}_dev
+- name: BACKEND_IMAGE_DEV
+  value: ${BACKEND_IMAGE}_dev
 
 images:
   app:
-    image: ${IMAGE}
+    image: ${BACKEND_IMAGE}
+    dockerfile: backend/Dockerfile
+    context: backend/
   appDev:
-    image: ${IMAGE_DEV}
+    image: ${BACKEND_IMAGE_DEV}
+    dockerfile: backend/Dockerfile
+    context: backend/
     build:
       docker:
         options:
@@ -39,7 +43,7 @@ deployments:
     # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
     values:
       containers:
-      - image: ${IMAGE} # Use the value of our `${IMAGE}` variable here (see vars above)
+      - image: ${BACKEND_IMAGE} # Use the value of our `${BACKEND_IMAGE}` variable here (see vars above)
         env:
         - name: DB_HOST
           value: "database-postgresql"
@@ -58,7 +62,7 @@ dev:
   # `dev.ports` specifies all ports that should be forwarded while `devspace dev` is running
   # Port-forwarding lets you access your application via localhost on your local machine
   ports:
-  - imageSelector: ${IMAGE} # Select the Pod that runs our `${IMAGE}`
+  - imageSelector: ${BACKEND_IMAGE} # Select the Pod that runs our `${BACKEND_IMAGE}`
     forward:
     - port: 5000
 
@@ -69,9 +73,9 @@ dev:
 
   # `dev.sync` configures a file sync between our Pods in k8s and your local project files
   sync:
-  - imageSelector: ${IMAGE} # Select the Pod that runs our `${IMAGE}`
+  - imageSelector: ${BACKEND_IMAGE} # Select the Pod that runs our `${BACKEND_IMAGE}`
+    localSubPath: backend/
     excludePaths:
-    - .git/
     - __pycache__/
     - .coverage
     - .pytest_cache/
@@ -79,10 +83,10 @@ dev:
   # Since our Helm charts and manifests deployments are often optimized for production,
   # DevSpace let's you swap out Pods dynamically to get a better dev environment
   replacePods:
-  - imageSelector: ${IMAGE} # Select the Pod that runs our `${IMAGE}`
-    # Since the `${IMAGE}` used to start our main application pod may be distroless or not have any dev tooling, let's replace it with a dev-optimized image
+  - imageSelector: ${BACKEND_IMAGE} # Select the Pod that runs our `${BACKEND_IMAGE}`
+    # Since the `${BACKEND_IMAGE}` used to start our main application pod may be distroless or not have any dev tooling, let's replace it with a dev-optimized image
     # DevSpace provides a sample image here but you can use any image for your specific needs
-    replaceImage: ${IMAGE_DEV}
+    replaceImage: ${BACKEND_IMAGE_DEV}
 
   logs:
     showLast: 200
@@ -101,8 +105,8 @@ profiles:
   merge:
     images:
       app:
-        image: ${IMAGE} # Use the value of our `${IMAGE}` variable here (see vars above)
-        dockerfile: ./Dockerfile
+        image: ${BACKEND_IMAGE} # Use the value of our `${IMAGE}` variable here (see vars above)
+        dockerfile: ./backend/Dockerfile
 
 commands:
 - name: lint
