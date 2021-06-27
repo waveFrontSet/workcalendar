@@ -1,6 +1,6 @@
 # Workcalendar App
 
-A small django app to experiment with the deployment process of
+A small full stack app to experiment with the deployment process of
 [devspace](https://devspace.sh/).
 
 ## Quick development setup
@@ -12,7 +12,7 @@ A small django app to experiment with the deployment process of
   [enable
   Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes).
 
-Then, we can use `devspace` to fire up a development container via the following
+Then, we can use `devspace` to fire up development containers via the following
 process.
 1. Make sure you are in the right context. If in doubt, use `devspace use
    context` and select it again. For instance, if you want to use the Docker
@@ -23,7 +23,12 @@ process.
    development image containing all necessary dependencies and development
    extras such as `pytest`, `flake8` and `black`.
 4. If everything goes will, you will be greeted by a new browser window showing
-   the app. Logs from the development container will be streamed.
+   both the backend's admin panel and the frontend. Logs from the development
+   containers will be streamed.
+
+Note that both the frontend and the backend support hot reloading. If you make
+changes to the backend code in `backend/`, the backend server will restart and
+apply your changes immediately. The same goes for the frontend.
 
 ## Running tests and linters
 
@@ -33,7 +38,7 @@ enter
 devspace run test
 ```
 
-to let the tests run inside the container. If you wish to run linting checks,
+to let the tests run inside the backend container. If you wish to run linting checks,
 execute
 ```
 devspace run lint

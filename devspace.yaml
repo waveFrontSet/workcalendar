@@ -2,12 +2,18 @@ version: v1beta10
 
 # `vars` specifies variables which may be used as ${VAR_NAME} in devspace.yaml
 vars:
+- name: FRONTEND_IMAGE
+  value: ghcr.io/wavefrontset/workcalendar-frontend
 - name: BACKEND_IMAGE
   value: ghcr.io/wavefrontset/workcalendar
 - name: BACKEND_IMAGE_DEV
   value: ${BACKEND_IMAGE}_dev
 
 images:
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    dockerfile: frontend/Dockerfile
+    context: frontend/
   app:
     image: ${BACKEND_IMAGE}
     dockerfile: backend/Dockerfile
@@ -34,13 +40,14 @@ deployments:
       postgresqlDatabase: "db_workcalendar"
       postgresqlUsername: "workcalendar"
       postgresqlPassword: ${DB_PASSWORD}
-- name: workcalendar
+- name: backend
   # This deployment uses `helm` but you can also define `kubectl` deployments or kustomizations
   helm:
     # We are deploying the so-called Component Chart: https://devspace.sh/component-chart/docs
     componentChart: true
     # Under `values` we can define the values for this Helm chart used during `helm install/upgrade`
     # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
+    wait: true
     values:
       containers:
       - image: ${BACKEND_IMAGE} # Use the value of our `${BACKEND_IMAGE}` variable here (see vars above)
@@ -56,6 +63,15 @@ deployments:
       service:
         ports:
         - port: 5000
+- name: frontend
+  helm:
+    componentChart: true
+    values:
+      containers:
+      - image: ${FRONTEND_IMAGE} # Use the value of our `${BACKEND_IMAGE}` variable here (see vars above)
+      service:
+        ports:
+        - port: 8080
 
 # `dev` only applies when you run `devspace dev`
 dev:
@@ -65,11 +81,15 @@ dev:
   - imageSelector: ${BACKEND_IMAGE} # Select the Pod that runs our `${BACKEND_IMAGE}`
     forward:
     - port: 5000
+  - imageSelector: ${FRONTEND_IMAGE}
+    forward:
+    - port: 8080
 
   # `dev.open` tells DevSpace to open certain URLs as soon as they return HTTP status 200
   # Since we configured port-forwarding, we can use a localhost address here to access our application
   open:
   - url: http://localhost:5000/admin
+  - url: http://localhost:8080/entries
 
   # `dev.sync` configures a file sync between our Pods in k8s and your local project files
   sync:
@@ -79,6 +99,10 @@ dev:
     - __pycache__/
     - .coverage
     - .pytest_cache/
+  - imageSelector: ${FRONTEND_IMAGE} # Select the Pod that runs our `${BACKEND_IMAGE}`
+    localSubPath: frontend/
+    excludePaths:
+    - node_modules/
 
   # Since our Helm charts and manifests deployments are often optimized for production,
   # DevSpace let's you swap out Pods dynamically to get a better dev environment
@@ -94,7 +118,9 @@ dev:
     disabled: false
     selectors:
     - labelSelector:
-        app.kubernetes.io/component: workcalendar
+        app.kubernetes.io/component: backend
+    - labelSelector:
+        app.kubernetes.io/component: frontend
 
 # `profiles` lets you modify the config above for different environments (e.g. dev vs production)
 profiles:
@@ -110,8 +136,8 @@ profiles:
 
 commands:
 - name: lint
-  command: "echo 'black --check . && flake8' | devspace enter -l app.kubernetes.io/component=workcalendar"
+  command: "echo 'black --check . && flake8' | devspace enter -l app.kubernetes.io/component=backend"
 - name: test
-  command: "devspace enter pytest -l app.kubernetes.io/component=workcalendar"
+  command: "devspace enter pytest -l app.kubernetes.io/component=backend"
 - name: testloop
-  command: "echo 'pytest --looponfail' | devspace enter -l app.kubernetes.io/component=workcalendar"
+  command: "echo 'pytest --looponfail' | devspace enter -l app.kubernetes.io/component=backend"
