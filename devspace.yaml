@@ -137,9 +137,13 @@ profiles:
 commands:
 - name: backend
   command: "devspace enter -l app.kubernetes.io/component=backend"
+  description: "Entry point for the backend pod"
 - name: lint
   command: "devspace run backend -- black --check . && flake8"
+  description: "Run linters in the backend pod"
 - name: test
   command: "devspace run backend -- pytest"
+  description: "Run tests in the backend pod"
 - name: frontend
   command: "devspace enter -l app.kubernetes.io/component=frontend"
+  description: "Entry point for the frontend pod"
