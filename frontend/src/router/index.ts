@@ -25,6 +25,14 @@ const routes: Array<RouteConfig> = [
     component: () =>
       import(/* webpackChunkName: "entries" */ "../components/EntryList.vue"),
   },
+  {
+    path: "/create",
+    name: "CreateEntry",
+    component: () =>
+      import(
+        /* webpackChunkName: "create-entry" */ "../components/CreateEntry.vue"
+      ),
+  },
 ];
 
 const router = new VueRouter({

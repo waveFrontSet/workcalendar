@@ -11,12 +11,21 @@ export default new Vuex.Store({
     setEntries(state, entries) {
       state.entries = entries;
     },
+    addEntry(state, entry) {
+      state.entries.push(entry);
+    },
   },
   actions: {
     async fetchEntries(context) {
-      const response = await api.getEntries();
-      const entries = response.data;
+      const entries = await api.getEntries().then((response) => response.data);
       context.commit("setEntries", entries);
+    },
+    async createEntry(context, entry) {
+      console.log(entry);
+      const data = await api
+        .createEntry(entry)
+        .then((response) => response.data);
+      context.commit("addEntry", data);
     },
   },
   modules: {},
