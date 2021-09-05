@@ -1,25 +1,34 @@
 <template>
-  <div class="hello">
-    <h1>List of entries</h1>
-    <ul>
-      <li v-for="entry in entries" :key="entry.id">
-        {{ entry.day }} {{ entry.day_type }}
-      </li>
-    </ul>
-  </div>
+  <v-row align="center" class="list px-3 mx-auto">
+    <v-col cols="12" sm="12">
+      <v-card class="mx-auto" tile>
+        <v-card-title>Entries</v-card-title>
+        <v-data-table :headers="headers" :items="entries"> </v-data-table>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import Vue from "vue";
+import { mapActions, mapState } from "vuex";
 
-@Options({
-  props: {
-    entries: [],
+export default Vue.extend({
+  name: "EntryList",
+  data: () => ({
+    headers: [
+      { text: "Date", value: "day" },
+      { text: "Type", value: "day_type" },
+    ],
+  }),
+  computed: mapState(["entries"]),
+  methods: {
+    ...mapActions(["fetchEntries"]),
   },
-})
-export default class EntryList extends Vue {
-  entries!: Array<any>;
-}
+  async mounted() {
+    this.fetchEntries();
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

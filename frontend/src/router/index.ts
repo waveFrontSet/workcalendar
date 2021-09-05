@@ -1,8 +1,10 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import Vue from "vue";
+import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
-import Entries from "../views/Entries.vue";
 
-const routes: Array<RouteRecordRaw> = [
+Vue.use(VueRouter);
+
+const routes: Array<RouteConfig> = [
   {
     path: "/",
     name: "Home",
@@ -20,12 +22,14 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/entries",
     name: "Entries",
-    component: Entries,
+    component: () =>
+      import(/* webpackChunkName: "entries" */ "../components/EntryList.vue"),
   },
 ];
 
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+const router = new VueRouter({
+  mode: "history",
+  base: process.env.BASE_URL,
   routes,
 });
 
