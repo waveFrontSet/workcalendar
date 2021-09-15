@@ -2,17 +2,26 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { api } from "@/api";
 
+type Entry = {
+  id: number;
+  day: Date;
+  day_type: string;
+};
+
 Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     entries: [],
   },
   mutations: {
-    setEntries(state, entries) {
+    setEntries(state, entries: Entry[]) {
       state.entries = entries;
     },
-    addEntry(state, entry) {
+    addEntry(state, entry: Entry) {
       state.entries.push(entry);
+    },
+    removeEntry(state, id) {
+      state.entries = state.entries.filter((entry) => entry.id != id);
     },
   },
   actions: {
@@ -26,6 +35,10 @@ export default new Vuex.Store({
         .createEntry(entry)
         .then((response) => response.data);
       context.commit("addEntry", data);
+    },
+    async deleteEntry(context, id: number) {
+      await api.deleteEntry(id);
+      context.commit("removeEntry", id);
     },
   },
   modules: {},
