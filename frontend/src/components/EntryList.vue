@@ -5,7 +5,7 @@
         <v-card-title>Entries</v-card-title>
         <create-entry />
         <v-data-table :headers="headers" :items="entries" sort-by="day">
-          <template v-slot:item.actions="{ item }">
+          <template v-slot:[`item.actions`]="{ item }">
             <v-icon small @click="deleteEntry(item.id)">mdi-delete</v-icon>
           </template>
         </v-data-table>
