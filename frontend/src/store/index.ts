@@ -8,11 +8,17 @@ type Entry = {
   day_type: string;
 };
 
+interface EntryState {
+  entries: Entry[];
+}
+
+const state: EntryState = {
+  entries: [],
+};
+
 Vue.use(Vuex);
 export default new Vuex.Store({
-  state: {
-    entries: [],
-  },
+  state,
   mutations: {
     setEntries(state, entries: Entry[]) {
       state.entries = entries;
@@ -30,7 +36,6 @@ export default new Vuex.Store({
       context.commit("setEntries", entries);
     },
     async createEntry(context, entry) {
-      console.log(entry);
       const data = await api
         .createEntry(entry)
         .then((response) => response.data);
