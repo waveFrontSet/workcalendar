@@ -15,21 +15,22 @@ interface EntryState {
 const state: EntryState = {
   entries: [],
 };
+export const mutations = {
+  setEntries(state: EntryState, entries: Entry[]) {
+    state.entries = entries;
+  },
+  addEntry(state: EntryState, entry: Entry) {
+    state.entries.push(entry);
+  },
+  removeEntry(state: EntryState, id: number) {
+    state.entries = state.entries.filter((entry) => entry.id != id);
+  },
+};
 
 Vue.use(Vuex);
 export default new Vuex.Store({
   state,
-  mutations: {
-    setEntries(state, entries: Entry[]) {
-      state.entries = entries;
-    },
-    addEntry(state, entry: Entry) {
-      state.entries.push(entry);
-    },
-    removeEntry(state, id) {
-      state.entries = state.entries.filter((entry) => entry.id != id);
-    },
-  },
+  mutations,
   actions: {
     async fetchEntries(context) {
       const entries = await api.getEntries().then((response) => response.data);
